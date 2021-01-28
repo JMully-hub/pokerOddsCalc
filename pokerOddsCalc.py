@@ -402,7 +402,8 @@ seatPositions2 = {'1': (870,79,80,35),
 
 binary = FirefoxBinary(str(Path(r'C:/Program Files/Mozilla Firefox/firefox.exe')))
 driver = webdriver.Firefox(firefox_binary = binary, executable_path = str(Path('.\geckodriver.exe')))
-driver.set_window_size(200, 700)
+driver.set_window_size(200, 1041)
+
 driver.get('https://www.888poker.com/poker/poker-odds-calculator')
 
 try:
@@ -512,18 +513,6 @@ riverClicked = 'no'
 
 try:
     while True: #main loop
-        if myCard1 == {} or myCard1 is None:
-            myCard1 = myFirstCard()
-        if myCard2 == {} or myCard2 is None:
-            myCard2 = mySecondCard()
-        elif myCard1 is None and myCard2 is not None:
-            myCard1 = myFirstCard()
-        if myCardsClicked == 'no':
-            if myCard1 is not None and myCard1 != {}:
-                if myCard2 is not None and myCard2 != {}:
-                    clickMyCards()
-                    myCardsClicked = 'yes'
-
         players = activePlayers()  
         if players != 0 and lastPlayers != 0:
             if lastPlayers < players:
@@ -549,7 +538,17 @@ try:
                     removePlayer.click()
                 closeremovePlayersLink.click()
         lastPlayers = players
-                    
+        if myCard1 == {} or myCard1 is None:
+            myCard1 = myFirstCard()
+        if myCard2 == {} or myCard2 is None:
+            myCard2 = mySecondCard()
+        elif myCard1 is None and myCard2 is not None:
+            myCard1 = myFirstCard()
+        if myCardsClicked == 'no':
+            if myCard1 is not None and myCard1 != {}:
+                if myCard2 is not None and myCard2 != {}:
+                    clickMyCards()
+                    myCardsClicked = 'yes'       
         if firstFlop == {} or firstFlop is None:
             firstFlop = firstFlopF()
         if secondFlop == {} or secondFlop is None:
