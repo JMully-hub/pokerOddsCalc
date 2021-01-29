@@ -2,13 +2,15 @@
 # pokerOdds.py - Simple screen recognition software to input current screen data to a ready-made poker
 # hands online calculator
 
+
+import sys, time, pyautogui, subprocess, os, logging, cv2
 import pyinputplus as pyip
-import sys, time, pyautogui, subprocess, os, logging
 from pathlib import Path
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+from selenium.webdriver.firefox.options import Options
 
 logging.disable(logging.CRITICAL)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s -  %(levelname)s-  %(message)s')
@@ -132,10 +134,13 @@ elif sizeOfTable == '6':
 elif sizeOfTable == '9':
     mySeat = pyip.inputMenu(['1', '2', '3', '4', '5', '6', '7', '8', '9'], 'Please select own seat number 1-9 clockwise\n')
 
+options = Options()
+options.add_argument("--kiosk")
 binary = FirefoxBinary(str(Path(r'C:/Program Files/Mozilla Firefox/firefox.exe')))
-driver = webdriver.Firefox(firefox_binary = binary, executable_path = str(Path('.\geckodriver.exe')))
-driver.set_window_size(200, 1041)
-#driver.set_window_position(1919,0)  ## Optional depending on user screen setup
+driver = webdriver.Firefox(options=options, firefox_binary = binary, executable_path = str(Path('.\geckodriver.exe')))
+driver.set_window_size(466, 500)
+driver.set_window_position(1914,0)
+
 driver.get('https://www.888poker.com/poker/poker-odds-calculator')
 
 deckDict = {'CLUB': driver.find_element_by_xpath('//*[@id="suit-selection-container"]/div/a[1]'),
@@ -263,7 +268,7 @@ removePlayersLink = driver.find_element_by_xpath('//*[@id="remove-players-link"]
 closeremovePlayersLink = driver.find_element_by_xpath('//*[@id="remove-players-link"]')
 removePlayer = driver.find_element_by_xpath('//*[@id="player-listing"]/div[2]/div[1]')
 addPlayer = driver.find_element_by_xpath('//*[@id="add-player-link"]/span')
-topOfPage = driver.find_element_by_xpath('//*[@id="poker-table"]')
+tableView = driver.find_element_by_xpath('//*[@id="poker-table"]')
 playerTables = driver.find_elements_by_class_name('player--single.card-selection-block')
 
 try:
@@ -319,7 +324,7 @@ try:
                 for i in range(playerDifference):
                     driver.execute_script("arguments[0].scrollIntoView(true);", addPlayer)
                     addPlayer.click()
-                    driver.execute_script("arguments[0].scrollIntoView(true);", topOfPage)
+                    driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
             elif playerDifference > 0:
             #remove from calc
                 removePlayersLink.click()
@@ -340,6 +345,7 @@ try:
             if myCard1 is not None and myCard2 is not None:
                 clickMyCards()
                 myCardsClicked = 'yes'
+                driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
         if firstFlop is None:
             firstFlop = findCard(dealerHandPositions, 'flop1')
             logging.info('1st Flop is '+str(firstFlop))
@@ -371,14 +377,17 @@ try:
             if firstFlop is not None and secondFlop is not None and thirdFlop is not None:
                 clickAllFlopCards()
                 flopClicked = 'yes'
+                driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
         if turnClicked == 'no':
             if turnCard is not None:
                 clickTurn()
                 turnClicked = 'yes'
+                driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
         if riverClicked == 'no':
             if riverCard is not None:
                 clickRiver()
                 riverClicked = 'yes'
+                driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
         if players == 0:
             myCard1 = None
             myCard2 = None
