@@ -135,7 +135,7 @@ elif sizeOfTable == '9':
 binary = FirefoxBinary(str(Path(r'C:/Program Files/Mozilla Firefox/firefox.exe')))
 driver = webdriver.Firefox(firefox_binary = binary, executable_path = str(Path('.\geckodriver.exe')))
 driver.set_window_size(200, 1041)
-driver.set_window_position(1919,0)
+#driver.set_window_position(1919,0)  ## Optional depending on user screen setup
 driver.get('https://www.888poker.com/poker/poker-odds-calculator')
 
 deckDict = {'CLUB': driver.find_element_by_xpath('//*[@id="suit-selection-container"]/div/a[1]'),
