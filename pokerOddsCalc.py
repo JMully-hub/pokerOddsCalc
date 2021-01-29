@@ -12,7 +12,7 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
 
-#logging.disable(logging.CRITICAL)
+logging.disable(logging.CRITICAL)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s -  %(levelname)s-  %(message)s')
 logging.info('Start of program')
 
@@ -144,7 +144,6 @@ driver2.set_window_size(466, 550)
 driver2.set_window_position(1914,494)
 driver.get('https://www.888poker.com/poker/poker-odds-calculator')
 driver2.get('https://betandbeat.com/poker/rules/hands/')
-driver2.execute_script("arguments[0].scrollIntoView(true);", pokerHands)
 
 deckDict = {'CLUB': driver.find_element_by_xpath('//*[@id="suit-selection-container"]/div/a[1]'),
             'twoCLUB': driver.find_element_by_xpath('//*[@id="card-selection-table"]/div[1]/div[1]/a[1]'),
@@ -280,6 +279,7 @@ try:
     popupClose.click()
 except NoSuchElementException:
     pass
+driver2.execute_script("arguments[0].scrollIntoView(true);", pokerHands)
 
 firstFlop = None
 secondFlop = None
