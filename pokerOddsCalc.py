@@ -55,9 +55,32 @@ def findCard(dictionary, key):
 def StartNewRound():
     reset.click()
     resetConfirm.click()
-    newRoundStarted = activePlayers()
-    while newRoundStarted == 0:
+    while True:
         time.sleep(0.5)
+        newRoundStarted = activePlayers()
+        if newRoundStarted != 0:
+            break
+        
+def playerAddRemove():
+    calcPlayers = -1
+    for i in playerTables:
+        isInactive = "inactive" in i.get_attribute("data-status")
+        if isInactive is False:
+            calcPlayers = calcPlayers +1
+    playerDifference = calcPlayers - players
+    if playerDifference < 0:
+    # add to calc
+        playerDifference = playerDifference *-1
+        for i in range(playerDifference):
+            driver.execute_script("arguments[0].scrollIntoView(true);", addPlayer)
+            addPlayer.click()
+            driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
+    elif playerDifference > 0:
+    #remove from calc
+        removePlayersLink.click()
+        for i in range(playerDifference):
+            removePlayer.click()
+        closeremovePlayersLink.click()
 
 def clickMyCards():
     myCalcCard1.click()
@@ -308,34 +331,31 @@ if mySeat in playerSeats:
 myHand1 = mySeat+'a'
 myHand2 = mySeat+'b'
 
-
 try:
     while True: #main loop
         players = activePlayers()
         logging.info('Number other players: '+str(players))
-        if players != 0 and lastPlayers != 0:
-            if lastPlayers < players:
-                players = 0
-        if players != lastPlayers:
-            calcPlayers = -1
-            for i in playerTables:
-                isInactive = "inactive" in i.get_attribute("data-status")
-                if isInactive is False:
-                    calcPlayers = calcPlayers +1
-            playerDifference = calcPlayers - players
-            if playerDifference < 0:
-            # add to calc
-                playerDifference = playerDifference *-1
-                for i in range(playerDifference):
-                    driver.execute_script("arguments[0].scrollIntoView(true);", addPlayer)
-                    addPlayer.click()
-                    driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
-            elif playerDifference > 0:
-            #remove from calc
-                removePlayersLink.click()
-                for i in range(playerDifference):
-                    removePlayer.click()
-                closeremovePlayersLink.click()
+        logging.info('Last loop\'s players '+str(lastPlayers))
+        if players != 0 and lastPlayers != 0 and lastPlayers < players:
+            players = 0
+        if players != lastPlayers and players != 0:
+            playerAddRemove()
+        if players == 0:
+            logging.info('\n********RESET*********\n')
+            myCard1 = None
+            myCard2 = None
+            firstFlop = None
+            secondFlop = None
+            thirdFlop = None
+            turnCard = None
+            riverCard = None
+            myCardsClicked = 'no'
+            flopClicked = 'no'
+            turnClicked = 'no'
+            riverClicked = 'no'
+            StartNewRound()
+            players = int(sizeOfTable)-1
+            playerAddRemove()
         lastPlayers = players
         if myCard1 is None:
             myCard1 = findCard(myHandPositions, myHand1)
@@ -351,6 +371,7 @@ try:
                 clickMyCards()
                 myCardsClicked = 'yes'
                 driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
+        logging.info('myCardsClicked = '+myCardsClicked)
         if firstFlop is None:
             firstFlop = findCard(dealerHandPositions, 'flop1')
             logging.info('1st Flop is '+str(firstFlop))
@@ -383,29 +404,20 @@ try:
                 clickAllFlopCards()
                 flopClicked = 'yes'
                 driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
+        logging.info('flopClicked = '+flopClicked)
         if turnClicked == 'no':
             if turnCard is not None:
                 clickTurn()
                 turnClicked = 'yes'
                 driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
+        logging.info('turnClicked = '+turnClicked)
         if riverClicked == 'no':
             if riverCard is not None:
                 clickRiver()
                 riverClicked = 'yes'
                 driver.execute_script("arguments[0].scrollIntoView(true);", tableView)
-        if players == 0:
-            myCard1 = None
-            myCard2 = None
-            firstFlop = None
-            secondFlop = None
-            thirdFlop = None
-            turnCard = None
-            riverCard = None
-            myCardsClicked = 'no'
-            flopClicked = 'no'
-            turnClicked = 'no'
-            riverClicked = 'no'
-            StartNewRound()     
+        logging.info('riverClicked = '+riverClicked)
+
 except KeyboardInterrupt:
     print('Closing geckodriver and firefox...')
     driver.quit()
