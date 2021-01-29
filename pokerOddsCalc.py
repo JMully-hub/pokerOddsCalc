@@ -12,7 +12,7 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
 
-logging.disable(logging.CRITICAL)
+#logging.disable(logging.CRITICAL)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s -  %(levelname)s-  %(message)s')
 logging.info('Start of program')
 
@@ -26,6 +26,7 @@ def activePlayers():
 
 def findCard(dictionary, key):
     deckList =  os.listdir(r'.\images\suits')
+    returnDic = {}
     for s in deckList:
         if pyautogui.locateOnScreen(('.\\images\\suits\\'+s),
                                     region=dictionary[key], confidence=0.99) is not None:
@@ -37,7 +38,6 @@ def findCard(dictionary, key):
                                                 region=dictionary[key], confidence=0.99) is not None:
                         value = str(os.path.basename(v)).replace('.png', '')
                         card = str(value+suit)
-                        returnDic = {}
                         returnDic.setdefault('SUIT', suit)
                         returnDic.setdefault('CARD', card)
                         return returnDic
@@ -48,7 +48,6 @@ def findCard(dictionary, key):
                                                 region=dictionary[key], confidence=0.99) is not None:
                         value = str(os.path.basename(v)).replace('.png', '')
                         card = str(value+suit)
-                        returnDic = {}
                         returnDic.setdefault('SUIT', suit)
                         returnDic.setdefault('CARD', card)
                         return returnDic
@@ -135,13 +134,17 @@ elif sizeOfTable == '9':
     mySeat = pyip.inputMenu(['1', '2', '3', '4', '5', '6', '7', '8', '9'], 'Please select own seat number 1-9 clockwise\n')
 
 options = Options()
-options.add_argument("--kiosk")
+options.add_argument('--kiosk')
 binary = FirefoxBinary(str(Path(r'C:/Program Files/Mozilla Firefox/firefox.exe')))
 driver = webdriver.Firefox(options=options, firefox_binary = binary, executable_path = str(Path('.\geckodriver.exe')))
+driver2 = webdriver.Firefox(options=options, firefox_binary = binary, executable_path = str(Path('.\geckodriver.exe')))
 driver.set_window_size(466, 500)
 driver.set_window_position(1914,0)
-
+driver2.set_window_size(466, 550)
+driver2.set_window_position(1914,494)
 driver.get('https://www.888poker.com/poker/poker-odds-calculator')
+driver2.get('https://betandbeat.com/poker/rules/hands/')
+driver2.execute_script("arguments[0].scrollIntoView(true);", pokerHands)
 
 deckDict = {'CLUB': driver.find_element_by_xpath('//*[@id="suit-selection-container"]/div/a[1]'),
             'twoCLUB': driver.find_element_by_xpath('//*[@id="card-selection-table"]/div[1]/div[1]/a[1]'),
@@ -206,7 +209,7 @@ myHandPositions9 = {'1a': (1104,41,40,80), '1b': (1200,40,40,80),
                    '4a': (1292,545,40,80), '4b': (1389,549,40,80),
                    '5a': (864,640,40,80), '5b': (962,640,40,80),
                    '6a': (436,548,40,80), '6b': (534,548,40,80),
-                   '7a': (534,548,40,80), '7b': (388,339,40,80),
+                   '7a': (297,342,40,80), '7b': (388,339,40,80),
                    '8a': (351,137,40,80), '8b': (447,140,40,80),
                    '9a': (627,43,40,80), '9b': (722,41,40,80)}
 
@@ -270,6 +273,7 @@ removePlayer = driver.find_element_by_xpath('//*[@id="player-listing"]/div[2]/di
 addPlayer = driver.find_element_by_xpath('//*[@id="add-player-link"]/span')
 tableView = driver.find_element_by_xpath('//*[@id="poker-table"]')
 playerTables = driver.find_elements_by_class_name('player--single.card-selection-block')
+pokerHands = driver2.find_element_by_xpath('//*[@id="silo-20"]/div[1]/div[5]/div/figure/img')
 
 try:
     popupClose = driver.find_element_by_xpath('/html/body/div[2]/div/img[2]')
@@ -304,6 +308,7 @@ if mySeat in playerSeats:
 myHand1 = mySeat+'a'
 myHand2 = mySeat+'b'
 
+
 try:
     while True: #main loop
         players = activePlayers()
@@ -337,7 +342,7 @@ try:
             logging.info('My 1st card is '+str(myCard1))
         if myCard2 is None:
             myCard2 = findCard(myHandPositions, myHand2)
-            logging.info('My 2nd card is '+str(myCard1))
+            logging.info('My 2nd card is '+str(myCard2))
         elif myCard1 is None and myCard2 is not None:
             myCard1 = findCard(myHandPositions, myHand1)
             logging.info('2nd Pass: My 1st card is '+str(myCard1))
@@ -354,13 +359,13 @@ try:
             logging.info('2nd Flop is '+str(secondFlop))
         if thirdFlop is None:
             thirdFlop = findCard(dealerHandPositions, 'flop3')
-            logging.info('3rd Flop is '+str(secondFlop))
+            logging.info('3rd Flop is '+str(thirdFlop))
         if turnCard is None:
             turnCard = findCard(dealerHandPositions, 'turnCard')
-            logging.info('Turn Card is '+str(secondFlop))
+            logging.info('Turn Card is '+str(turnCard))
         if riverCard is None:
             riverCard = findCard(dealerHandPositions, 'riverCard')
-            logging.info('River Card is '+str(secondFlop))
+            logging.info('River Card is '+str(riverCard))
         if firstFlop is None and secondFlop is not None:
             firstFlop = findCard(dealerHandPositions, 'flop1')
             logging.info('2nd Pass: 1st Flop is '+str(firstFlop))
@@ -404,6 +409,7 @@ try:
 except KeyboardInterrupt:
     print('Closing geckodriver and firefox...')
     driver.quit()
+    driver2.quit()
     subprocess.call(["taskkill","/F","/IM","firefox.exe"])
     print('Done, now exiting...')
     logging.info('End of program')
