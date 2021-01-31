@@ -14,7 +14,7 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
 
-#logging.disable(logging.CRITICAL)
+logging.disable(logging.CRITICAL)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s -  %(levelname)s-  %(message)s')
 logging.info('Start of program')
 
