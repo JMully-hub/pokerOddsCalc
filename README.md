@@ -16,14 +16,14 @@ This program uses real-time image capture to input your hand into the odd calcua
   When the program starts it will ask:
   
  Display the calculator on the same screen as the poker table? Y/N:
-  <User can choose to display the calculator on the same screen as the POKERSTARS app or on a seperate display if detected>
+  User can choose to display the calculator on the same screen as the POKERSTARS app or on a seperate display if detected
   
 Enter how many seats at table:
-<The player must enter depending on the table size they have chosen to play at.>
+The player must enter depending on the table size they have chosen to play at.
 
 It will then ask, depending on the answer given above, which seat the player has chosen to sit at:
 Please select own seat number 1-N clockwise:
-<The player must enter which seat position they are sitting at, starting from 12-o'clock and working clockwise.>
+The player must enter which seat position they are sitting at, starting from 12-o'clock and working clockwise.
  
 The program will then start geckdriver.exe and a firefox window will appear with the calculator displayed.  Another window will also apear with a handy poker hands ranking cheat-sheet for reference.
 
