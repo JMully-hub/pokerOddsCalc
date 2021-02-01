@@ -3,7 +3,7 @@
 # hands online calculator
 
 
-import sys, time, pyautogui, subprocess, os, logging, cv2
+import sys, time, pyautogui, os, logging, cv2
 import pygetwindow as gw
 from screeninfo import get_monitors
 import pyinputplus as pyip
@@ -489,7 +489,12 @@ except KeyboardInterrupt:
     print('Closing geckodriver and firefox...')
     driver.quit()
     driver2.quit()
-    subprocess.call(["taskkill","/F","/IM","firefox.exe"])
+    if gw.getWindowsWithTitle('Poker Calculator – Texas Holdem Poker Odds Calculator – Mozilla Firefox') != []:
+        window = gw.getWindowsWithTitle('Poker Calculator – Texas Holdem Poker Odds Calculator – Mozilla Firefox')[0]
+        window.close()
+    if gw.getWindowsWithTitle('Poker Hands – Rankings, Odds, Cheat Sheet & FAQ – Mozilla Firefox') != []:     
+        window = gw.getWindowsWithTitle('Poker Hands – Rankings, Odds, Cheat Sheet & FAQ – Mozilla Firefox')[0]
+        window.close() 
     print('Done, now exiting...')
     logging.info('End of program')
     time.sleep(2)
